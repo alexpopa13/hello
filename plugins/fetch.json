@@ -1,0 +1,8 @@
+{
+    "org.apache.cordova.inappbrowser": {
+        "source": {
+            "type": "local",
+            "path": "cordova-plugin-inappbrowser"
+        }
+    }
+}
