@@ -29,7 +29,6 @@ var app = {
         document.addEventListener('deviceready', this.onDeviceReady, false);
     },
     // deviceready Event Handler
-    //Sprin 8
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function () {
@@ -37,16 +36,11 @@ var app = {
 
 
         // FB connection init
-        openFB.init({appId: '428963747228960'});
+        openFB.init({appId: FB_CLIENT_ID});
     },
     // Update DOM on a Received Event
     receivedEvent: function (id) {
-//        var parentElement = document.getElementById(id);
-//        var listeningElement = parentElement.querySelector('.listening');
-//        var receivedElement = parentElement.querySelector('.received');
-//
-//        listeningElement.setAttribute('style', 'display:none;');
-//        receivedElement.setAttribute('style', 'display:block;');
+
         $("#fb-login").click(function () {
             login();
         });
@@ -73,18 +67,13 @@ function getInfo() {
     openFB.api({
         path: '/me',
         success: function (data) {
-            console.log(JSON.stringify(data));
+            // console.log(JSON.stringify(data));
             document.getElementById("userName").innerHTML = data.name;
             document.getElementById("userPic").src = 'http://graph.facebook.com/' + data.id + '/picture?type=small';
 
-            // Connect to Azure DB
-            var client = new WindowsAzure.MobileServiceClient(
-                    "https://phonegaptest.azure-mobile.net/",
-                    "XHzOEjRzDjIWZUPcMHBWQRcHIPOzTP74"
-                    );
-            var item = {username: data.name};
             todoItemTable = client.getTable('todoitem');
-            todoItemTable.insert(item);
+            insertUser(data, todoItemTable);
+
         },
         error: errorHandler});
 }
@@ -123,7 +112,7 @@ function errorHandler(error) {
 }
 
 function gmailLogin() {
-    var lock = new Auth0Lock('5hE0PiPDjNkJmEEeLdGTbraG8CrFPmGa', 'phonegaptest.auth0.com');
+    var lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN);
     lock.show(function (err, profile, token) {
         if (err) {
             // Error callback
